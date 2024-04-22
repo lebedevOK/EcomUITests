@@ -5,7 +5,6 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from data_for_test.urls import login_url
-from data_for_test.users import email_unregistered_user, password_unregistered_user
 
 
 @pytest.fixture
@@ -32,6 +31,14 @@ class LoginPage:
 
     def check_error_alert_text_is(self, text):
         error_message_element = self.driver.find_element(By.XPATH,
-                                                    "//div[@class='text_to_center']/p[@class='alert' and contains(text(), 'Неверный Email или пароль.')]")
+                                                         "//div[@class='text_to_center']/p[@class='alert' and contains(text(), 'Неверный Email или пароль.')]")
         error_message = error_message_element.text
         assert error_message == text, f"Expected '{text}', but got '{error_message}'"
+
+    def check_login_alert_text_is(self, text):
+        login_notice = WebDriverWait(self.driver, 3).until(
+            EC.presence_of_element_located(
+                (By.XPATH, "//div[@class='text_to_center']/p[@class='notice' and text()='Вход в систему выполнен.']"))
+        )
+        actual_message = login_notice.text
+        assert actual_message == (text), f"Expected message to be '{text}', but got '{actual_message}'"

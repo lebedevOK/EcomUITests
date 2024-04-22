@@ -1,45 +1,39 @@
-from selenium.webdriver.support import expected_conditions as EC
-from selenium import webdriver
 from selenium.webdriver import ActionChains, Keys
-from selenium.webdriver.support.wait import WebDriverWait
 
 from conftest import driver
 from selenium.webdriver.common.by import By
-from time import sleep
-import time
 
 from data_for_test.vins import vin, incorrect_vin, not_found_vin
-from data_for_test.urls import base_url
+from pages.find_part_page import FindPartPage
 
 
 def test_incorrect_vin(driver):
-    # Засекаем время старта
-    start_time = time.time()
+    find_part_page = FindPartPage(driver)
+    find_part_page.open_page()
 
-    driver.get(base_url)
-
-    # Создаем объект ActionChains
+    # Для закрытия модалки Создаем объект ActionChains,
+    # перемещаем курсор в левый верхний угол окна и совершаем клик с отступом в 10 пикселей
     actions = ActionChains(driver)
-    # Перемещаем курсор в левый верхний угол окна и совершаем клик с отступом в 10 пикселей
     actions.move_by_offset(10, 10).click().perform()
 
     # Переключаемся в поиск по VIN
     driver.find_element(By.CLASS_NAME, "link-or").click()
 
-    # Вводим некорректный VIN
-    vin_field = driver.find_element(By.NAME, 'vehicle[vin]')
-    vin_field.send_keys(incorrect_vin)
+    find_part_page.fill_form_vin(incorrect_vin)
+    find_part_page.check_error_alert_vin_text_is("Неверный формат VIN-номера")
 
-    # Нажимаем кнопку добавления автомобиля
-    driver.find_element(By.CSS_SELECTOR, 'button.button.green').click()
-    sleep(3)
 
-    # Находим ошибку при неверном формате VIN-номера
-    error_message_vin = driver.find_element(By.CSS_SELECTOR,
-                                            ".errors[data-role='form.garage.errors.vin'] label[for='vehicle[vin]']").text
+def test_correct_vin(driver):
+    find_part_page = FindPartPage(driver)
+    find_part_page.open_page()
 
-    assert error_message_vin == "Неверный формат VIN-номера", f"Expected 'Неверный формат VIN-номера', but got {error_message_vin}"
+    # Для закрытия модалки Создаем объект ActionChains,
+    # перемещаем курсор в левый верхний угол окна и совершаем клик с отступом в 10 пикселей
+    actions = ActionChains(driver)
+    actions.move_by_offset(10, 10).click().perform()
 
-    # Вычисляем и печатаем прошедшее время
-    elapsed_time = time.time() - start_time
-    print(f"Время выполнения теста test_incorrect_vin: {elapsed_time} секунд.")
+    # Переключаемся в поиск по VIN
+    driver.find_element(By.CLASS_NAME, "link-or").click()
+
+    find_part_page.fill_form_vin(vin)
+    find_part_page.check_added_message_text_is("Отлично! Автомобиль добавлен")
