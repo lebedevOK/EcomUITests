@@ -16,8 +16,10 @@ class BasePage:
     def __init__(self, driver):
         self.driver = driver
         
-    def open_page(self):
-        self.driver.get(base_url)
+    # def open_page(self):
+    #     self.driver.get(base_url)
+    def open_page(self, url=None):
+        self.driver.get(url or base_url)
 
     def check_menu_button_is(self, menu_item_text):
         menu_item = self.driver.find_element(By.LINK_TEXT, menu_item_text)

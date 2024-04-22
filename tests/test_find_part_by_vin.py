@@ -3,6 +3,7 @@ from selenium.webdriver import ActionChains, Keys
 from conftest import driver
 from selenium.webdriver.common.by import By
 
+from data_for_test.urls import base_url
 from data_for_test.vins import vin, incorrect_vin, not_found_vin
 from pages.find_part_page import FindPartPage
 

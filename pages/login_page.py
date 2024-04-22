@@ -5,6 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from data_for_test.urls import login_url
+from pages.base_page import BasePage
 
 
 @pytest.fixture
@@ -14,13 +15,8 @@ def driver():
     driver.quit()
 
 
-class LoginPage:
+class LoginPage(BasePage):
 
-    def __init__(self, driver):
-        self.driver = driver
-
-    def open_page(self):
-        self.driver.get(login_url)
 
     def fill_form_login(self, email, password):
         email_field = self.driver.find_element(By.CSS_SELECTOR, "input#user_email")
