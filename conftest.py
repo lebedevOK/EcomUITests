@@ -3,8 +3,10 @@ import pytest
 from time import sleep
 
 
-@pytest.fixture()
+@pytest.fixture
 def driver():
-    chrome_driver = webdriver.Chrome()
+    driver = webdriver.Chrome()
+    # driver.maximize_window()
     sleep(3)
-    return chrome_driver
+    yield driver
+    driver.quit()
