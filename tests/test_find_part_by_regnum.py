@@ -27,6 +27,4 @@ def test_correct_regnum(find_part_page):
 
 def test_not_found_regnum(find_part_page):
     find_part_page.open_page()
-    find_part_page.open_page()
-
     ...
