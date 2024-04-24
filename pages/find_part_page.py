@@ -4,40 +4,46 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 
 from pages.base_page import BasePage
+from pages.locators.find_part_page_loc import *
+
 
 
 class FindPartPage(BasePage):
     def fill_form_regnum(self, regnum, regreg):
-        regnum_field = self.driver.find_element(By.NAME, 'vehicle[regnum]')
+        regnum_field = self.find(regnum_field_locator)
         regnum_field.send_keys(regnum)
-        regreg_field = self.driver.find_element(By.NAME, 'vehicle[regreg]')
+        regreg_field = self.find(regreg_field_locator)
         regreg_field.send_keys(regreg)
-        self.driver.find_element(By.CSS_SELECTOR, 'button.button.green').click()
+        button_green = self.find(button_green_locator)
+        button_green.click()
+
+    def switch_to_vin_search(self):
+        # Переключаемся в поиск по VIN
+        vin_search_element = self.driver.find_element(*vin_find_locator)
+        vin_search_element.click()
 
     def fill_form_vin(self, vin):
-        vin_field = self.driver.find_element(By.NAME, 'vehicle[vin]')
+        vin_field = self.find(vin_field_locator)
         vin_field.send_keys(vin)
-        self.driver.find_element(By.CSS_SELECTOR, 'button.button.green').click()
-
+        button_green = self.find(button_green_locator)
+        button_green.click()
     def check_error_alert_regnum_text_is(self, text):
         """
         Ожидаем появления модального окна с текстом 'Неверный формат госномера'
         """
-        error_message = WebDriverWait(self.driver, 1).until(
-            EC.presence_of_element_located((
-                By.XPATH, "//label[@class='error' and normalize-space(text())]"))
+        error_regnum_message = WebDriverWait(self.driver, 1).until(
+            EC.presence_of_element_located(error_regnum_message_locator)
         ).text
 
-        assert error_message == text, f"Expected '{text}', but got {error_message}"
+        assert error_regnum_message == text, f"Expected '{text}', but got {error_regnum_message}"
 
     def check_added_message_text_is(self, text):
         """
         Ожидаем появления модального окна с текстом 'Отлично! Автомобиль добавлен'
         """
         added_message = WebDriverWait(self.driver, 3).until(
-            EC.visibility_of_element_located((By.CSS_SELECTOR, ".message .title"))
+            EC.visibility_of_element_located(added_message_locator)
         )
-
         assert added_message.text == text, f"Expected '{text}', but got {added_message}"
 
     def check_error_alert_vin_text_is(self, text):
@@ -45,7 +51,5 @@ class FindPartPage(BasePage):
         Ожидаем появления модального окна с текстом 'Неверный формат VIN-номера'
         """
         # Находим ошибку при неверном формате VIN-номера
-        error_message_vin = self.driver.find_element(By.CSS_SELECTOR,
-                                                     ".errors[data-role='form.garage.errors.vin'] label[for='vehicle[vin]']").text
-
-        assert error_message_vin == text, f"Expected '{text}', but got {error_message_vin}"
+        error_vin_message = self.find(error_vin_message_locator).text
+        assert error_vin_message == text, f"Expected '{text}', but got {error_vin_message}"

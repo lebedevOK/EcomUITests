@@ -1,29 +1,25 @@
 import pytest
 from selenium.webdriver import ActionChains
 
-from conftest import driver
+from conftest import *
 
 from pages.base_page import BasePage
+from pages.locators.find_part_page_loc import TopMenuLocators
 
 
-@pytest.mark.parametrize("menu_item_text", [
-    "Все каталоги",
-    "OEМ-Каталог",
-    "Запчасти для ТО",
-    "Подвеска",
-    "Свечи",
-    "Фильтры",
-    "Масла",
-    "Амортизаторы",
-    "Лампы"
+@pytest.mark.parametrize("menu_item_locator", [
+    TopMenuLocators.ALL_CATALOGS,
+    # TopMenuLocators.OEM_CATALOG,
+    # TopMenuLocators.PARTS_FOR_TO,
+    # TopMenuLocators.SUSPENSION,
+    # TopMenuLocators.SPARKPLUGS,
+    # TopMenuLocators.FILTERS,
+    # TopMenuLocators.OILS,
 ])
-def test_menu_items_presence(driver, menu_item_text):
-    base_page = BasePage(driver)
-    base_page.open_page()
+def test_menu_items_presence(find_part_page, menu_item_locator):
+    # инициализация страницы через find_part_page, а не через base_page
+    find_part_page.open_page()
 
-    # Для закрытия модалки Создаем объект ActionChains,
-    # перемещаем курсор в левый верхний угол окна и совершаем клик с отступом в 10 пикселей
-    actions = ActionChains(driver)
-    actions.move_by_offset(10, 10).click().perform()
+    find_part_page.close_modal()
 
-    base_page.check_menu_button_is(menu_item_text)
+    find_part_page.check_menu_button_is(menu_item_locator)
