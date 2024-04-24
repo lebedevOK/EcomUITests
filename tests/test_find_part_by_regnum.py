@@ -23,3 +23,7 @@ def test_correct_regnum(find_part_page):
 
     find_part_page.fill_form_regnum(regnum, regreg)
     find_part_page.check_added_message_text_is("Отлично! Автомобиль добавлен")
+
+
+def test_not_found_regnum(find_part_page):
+    ...
